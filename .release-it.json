@@ -5,8 +5,8 @@
       "release": true
     },
     "git": {
-      "commit": false,
-      "push": false,
+      "commit": true,
+      "push": true,
       "requireUpstream": false,
       "requireCleanWorkingDir": false
     },
