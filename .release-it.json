@@ -9,7 +9,8 @@
       "push": true,
       "requireUpstream": false,
       "requireCleanWorkingDir": false,
-      "tagName": "v${version}"
+      "tagName": "v${version}",
+      "commitMessage": "Release ${version}"
     },
     "npm": {
       "publish": false,
