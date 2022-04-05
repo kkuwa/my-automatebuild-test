@@ -1,0 +1,42 @@
+name: Release artifacts to github
+
+on:
+  push:
+    branches-ignore:
+      - '**'
+    # prerelease only
+    tags:
+      - 'v[0-9].[0-9]+.[0-9]+-[a-f0-9]{8}.[0-9]+'
+
+jobs:
+  push_to_registry:
+    name: Release artifacts to github
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@kkuwa'
+
+      - name: build
+        run: npm run build
+
+      - name: bundle
+        env:
+          WORK_DIR: ${{ github.workspace }}
+        run: |
+          tar czf - lib > $WORK_DIR/bundle.tar.gz
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: bundle.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "${{ github.event.release.tag_name }}"
+          allowUpdates: true
+          prerelease: true
