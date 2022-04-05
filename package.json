@@ -1,0 +1,27 @@
+{
+  "name": "my-webpack-project",
+  "version": "1.0.0",
+  "description": "My webpack project",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkuwa/my-automatebuild-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkuwa/my-automatebuild-test/issues"
+  },
+  "homepage": "https://github.com/kkuwa/my-automatebuild-test#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.23",
+    "prettier": "^2.6.2",
+    "ts-loader": "^9.2.8",
+    "typescript": "^4.6.3"
+  }
+}
