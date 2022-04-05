@@ -1,6 +1,6 @@
 {
   "name": "my-automatebuild-test",
-  "version": "0.0.21-2ed2124f.0",
+  "version": "0.0.21-2ed2124f.1",
   "description": "my-automatebuild-test project",
   "main": "lib/index.js",
   "scripts": {
