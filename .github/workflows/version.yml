@@ -1,6 +1,8 @@
 name: auto release demo
 on:
   push:
+    tags-ignore: 
+      - '**'
     # mainブランチにコミットがpushされたときに限定
     branches:
       - main

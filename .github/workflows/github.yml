@@ -2,9 +2,10 @@ name: Release artifacts to github
 
 on:
   push:
-    branches:
-      - main
-    tags: [ '*' ]
+    branches-ignore:
+      - '**'
+    tags:
+      - 'v*'
 
 jobs:
   push_to_registry:
