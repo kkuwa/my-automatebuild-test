@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish npm module and release github
 
 on:
   release:
@@ -27,3 +27,16 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: bundle
+        env:
+          WORK_DIR: ${{ github.workspace }}
+        run: |
+          tar czf - lib > $WORK_DIR/bundle.tar.gz
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: bundle.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "${{ github.event.release.tag_name }}"
