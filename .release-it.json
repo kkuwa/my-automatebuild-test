@@ -10,7 +10,7 @@
       "requireUpstream": false,
       "requireCleanWorkingDir": false,
       "tagName": "v${version}",
-      "commitMessage": "Release ${version}"
+      "commitMessage": "[automate_versioning] Release ${version}"
     },
     "npm": {
       "publish": false,
