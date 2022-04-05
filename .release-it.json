@@ -8,7 +8,8 @@
       "commit": true,
       "push": true,
       "requireUpstream": false,
-      "requireCleanWorkingDir": false
+      "requireCleanWorkingDir": false,
+      "tagName": "v${version}"
     },
     "npm": {
       "publish": false,

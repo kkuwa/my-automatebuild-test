@@ -1,4 +1,4 @@
-name: Publish npm module and release github
+name: Release artifacts to github
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push module to npm
+    name: Release artifacts to github
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -24,7 +24,16 @@ jobs:
       - name: build
         run: npm run build
 
-      - name: release
-        run: npm publish
+      - name: bundle
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          WORK_DIR: ${{ github.workspace }}
+        run: |
+          tar czf - lib > $WORK_DIR/bundle.tar.gz
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: bundle.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: "${{ github.event.release.tag_name }}"
+          allowUpdates: true

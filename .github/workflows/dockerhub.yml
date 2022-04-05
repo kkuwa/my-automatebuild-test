@@ -1,9 +1,10 @@
 name: Publish Docker image
 
 on:
-  release:
-    types: 
-    - published
+  push:
+    branches:
+      - main
+    tags: [ '*' ]
 
 jobs:
   push_to_registry:
@@ -25,7 +26,9 @@ jobs:
         with:
           images: kkuwa/my-automatebuild-test
           tags: |
-            type=raw,value={{github.event.release.tag_name}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}}
             type=raw,value=latest
 
       - name: Build and push Docker image
