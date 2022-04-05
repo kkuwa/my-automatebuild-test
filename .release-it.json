@@ -13,7 +13,6 @@
       "commitMessage": "[automate_versioning] Release ${version}"
     },
     "npm": {
-      "publish": false,
-      "ignoreVersion": true
+      "publish": false
     }
   }
