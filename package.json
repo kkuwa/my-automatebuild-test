@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "my-automatebuild-test",
   "version": "0.0.5",
-  "description": "My webpack project",
+  "description": "my-automatebuild-test project",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -20,8 +20,6 @@
   "homepage": "https://github.com/kkuwa/my-automatebuild-test#readme",
   "devDependencies": {
     "@types/node": "^17.0.23",
-    "prettier": "^2.6.2",
-    "ts-loader": "^9.2.8",
     "typescript": "^4.6.3"
   }
 }
