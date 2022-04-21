@@ -29,10 +29,10 @@ jobs:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
           scope: '@kkuwa'
-      - name: Set releaser settings
-        run: |
-          git config --global user.name ${{ secrets.EXT_GITHUB_USER }}
-          git config --global user.email ${{ secrets.EXT_GITHUB_EMAIL }}
+      # - name: Set releaser settings
+      #   run: |
+      #     git config --global user.name ${{ secrets.EXT_GITHUB_USER }}
+      #     git config --global user.email ${{ secrets.EXT_GITHUB_EMAIL }}
       - name: Major release
         id: major
         if: contains(toJSON(github.event.commits.*.message), 'bump up version major')
@@ -69,12 +69,18 @@ jobs:
         run: |
           tar czf - lib > $WORK_DIR/bundle.tar.gz
 
+      - name: Set TAG
+        run: |
+          echo 'TAG_NAME<<EOF' >> $GITHUB_ENV
+          git describe --tags >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
       - name: Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: bundle.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: "${{ github.event.release.tag_name }}"
+          tag: "${{ env.TAG_NAME }}"
           allowUpdates: true
       
       # dockerhub
