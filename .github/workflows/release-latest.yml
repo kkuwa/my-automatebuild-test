@@ -28,20 +28,25 @@ jobs:
         run: npm run build
 
       - name: Check is latest tag
-        continue-on-error: true
         run: |
-          npx semver -r ">${{env.TAG_VALUE}}" $(git tag) > /dev/null
-          IS_LATEST_RELEASE=$? >> $GITHUB_ENV
+          echo 'IS_PREVIOUS_VERSION<<EOF' >> $GITHUB_ENV
+          npx semver -r ">${{env.TAG_VALUE}}" $(git tag) | wc -l >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: release latest
-        if: "env.IS_LATEST_RELEASE == '1'"
+        if: "env.IS_PREVIOUS_VERSION == '0'"
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Resolve minor version
+        if: "env.IS_PREVIOUS_VERSION != '0'"
+        run: |
+          VERSION=${{env.TAG_VALUE}} && MINOR=${VERSION%.*} && echo "NPM_TAG_VALUE=${MINOR#v} >> $GITHUB_ENV"
+
       - name: release stable
-        if: "env.IS_LATEST_RELEASE == '0'"
-        run: npm publish --tag ${{ github.ref_name }}
+        if: "env.IS_PREVIOUS_VERSION != '0'"
+        run: npm publish --tag ${{ env.NPM_TAG_VALUE }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -96,13 +101,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Check is latest tag
-        continue-on-error: true
         run: |
-          npx semver -r ">${{env.TAG_VALUE}}" $(git tag) > /dev/null
-          IS_LATEST_RELEASE=$? >> $GITHUB_ENV
+          echo 'IS_PREVIOUS_VERSION<<EOF' >> $GITHUB_ENV
+          npx semver -r ">${{env.TAG_VALUE}}" $(git tag) | wc -l >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker for latest
-        if: "env.IS_LATEST_RELEASE == '1'"
+        if: "env.IS_PREVIOUS_VERSION == '0'"
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -114,7 +119,7 @@ jobs:
             type=raw,value=latest
 
       - name: Build and push Docker image for latest
-        if: "env.IS_LATEST_RELEASE == '1'"
+        if: "env.IS_PREVIOUS_VERSION == '0'"
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -122,7 +127,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
 
       - name: Extract metadata (tags, labels) for Docker for stable
-        if: "env.IS_LATEST_RELEASE == '0'"
+        if: "env.IS_PREVIOUS_VERSION != '0'"
         id: metastable
         uses: docker/metadata-action@v3
         with:
@@ -132,7 +137,7 @@ jobs:
             type=raw,value=${{ github.ref_name }}
 
       - name: Build and push Docker image for stable
-        if: "env.IS_LATEST_RELEASE == '0'"
+        if: "env.IS_PREVIOUS_VERSION != '0'"
         uses: docker/build-push-action@v2
         with:
           context: .
