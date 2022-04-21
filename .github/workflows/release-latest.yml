@@ -28,6 +28,7 @@ jobs:
         run: npm run build
 
       - name: Check is latest tag
+        continue-on-error: true
         run: |
           npx semver -r ">${{env.TAG_VALUE}}" $(git tag) > /dev/null
           IS_LATEST_RELEASE=$? >> $GITHUB_ENV
@@ -95,6 +96,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Check is latest tag
+        continue-on-error: true
         run: |
           npx semver -r ">${{env.TAG_VALUE}}" $(git tag) > /dev/null
           IS_LATEST_RELEASE=$? >> $GITHUB_ENV
