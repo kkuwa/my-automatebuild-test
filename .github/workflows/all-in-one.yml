@@ -27,6 +27,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@kkuwa'
       - name: Set releaser settings
         run: |
           git config --global user.name ${{ secrets.EXT_GITHUB_USER }}
