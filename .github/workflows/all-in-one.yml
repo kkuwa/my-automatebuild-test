@@ -29,10 +29,10 @@ jobs:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
           scope: '@kkuwa'
-      # - name: Set releaser settings
-      #   run: |
-      #     git config --global user.name ${{ secrets.EXT_GITHUB_USER }}
-      #     git config --global user.email ${{ secrets.EXT_GITHUB_EMAIL }}
+      - name: Set releaser settings
+        run: |
+          git config --global user.name ${{ secrets.GITHUB_USER }}
+          git config --global user.email ${{ secrets.GITHUB_EMAIL }}
       - name: Major release
         id: major
         if: contains(toJSON(github.event.commits.*.message), 'bump up version major')
