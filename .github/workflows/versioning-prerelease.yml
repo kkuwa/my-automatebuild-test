@@ -6,6 +6,7 @@ on:
     # mainブランチにコミットがpushされたときに限定
     branches-ignore:
       - main
+      - stable-*
     # 上記条件に加えてgenディレクトリ配下が変更されたときのみという条件を追加
     # paths:
     #   - gen/**
@@ -45,5 +46,5 @@ jobs:
 
       - name: Update prerelease version
         id: prerelease
-        if: "contains(toJSON(github.event.commits.*.message), '[PRERELEASE]')  && !contains(toJSON(github.event.commits.*.message), '[automate_versioning_prerelease] Prerelease ')"
+        if: "contains(toJSON(github.event.commits.*.message), '[[PRERELEASE]]')  && !contains(toJSON(github.event.commits.*.message), '[automate_versioning_prerelease] Prerelease ')"
         run:  npx release-it@${RELEASE_IT_VERSION} -c .release-it-prerelease.json --preRelease=pre${{env.RC_NAME}} --ci

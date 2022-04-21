@@ -33,12 +33,12 @@ jobs:
           git config --global user.email ${{ secrets.EXT_GITHUB_EMAIL }}
       - name: Major release
         id: major
-        if: contains(toJSON(github.event.commits.*.message), 'bump up version major')
+        if: contains(toJSON(github.event.commits.*.message), '[[MAJOR]]')
         run:  npx release-it@${RELEASE_IT_VERSION} -- major --ci
       - name: Minor release
         id: minor
         # メジャーバージョンアップをしていないときマイナーバージョンアップを行なうか
-        if: steps.major.conclusion == 'skipped'  && contains(toJSON(github.event.commits.*.message), 'bump up version minor')
+        if: steps.major.conclusion == 'skipped'  && contains(toJSON(github.event.commits.*.message), '[[MINOR]]')
         run:  npx release-it@${RELEASE_IT_VERSION} -- minor --ci
       - name: Patch release
         # コミットメッセージに特に指定がなく、かつバージョン更新コミットでない場合（ループ抑止）はマイナーバージョンを更新する
