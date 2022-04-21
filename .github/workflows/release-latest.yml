@@ -2,11 +2,10 @@ name: release latest
 
 on:
   push:
-    branches:
-      - 'main'
+    branches-ignore:
+      - '**'
     tags:
       - 'v[0-9].[0-9]+.[0-9]+'
-
 jobs:
   push_to_npm:
     name: Push module to npm
@@ -25,10 +24,25 @@ jobs:
       - name: build
         run: npm run build
 
-      - name: release
+      - name: Check is latest tag
+        run: |
+          npx semver -r ">$GIT_TAG" $(git tag) > /dev/null
+          IS_LATEST_RELEASE=$? >> $GITHUB_ENV
+        env:
+          GIT_TAG: "${{ github.event.release.tag_name }}"
+
+      - name: release latest
+        if: "env.IS_LATEST_RELEASE == '1'"
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: release stable
+        if: "env.IS_LATEST_RELEASE == '0'"
+        run: npm publish --tag ${{ github.ref_name }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   push_to_github:
     name: Release artifacts to github
     runs-on: ubuntu-latest
@@ -59,6 +73,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: "${{ github.event.release.tag_name }}"
           allowUpdates: true
+
   push_to_dockerhub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -72,7 +87,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker
+      - name: Check is latest tag
+        run: |
+          npx semver -r ">$GIT_TAG" $(git tag) > /dev/null
+          IS_LATEST_RELEASE=$? >> $GITHUB_ENV
+        env:
+          GIT_TAG: "${{ github.event.release.tag_name }}"
+
+      - name: Extract metadata (tags, labels) for Docker for latest
+        if: "env.IS_LATEST_RELEASE == '1'"
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -83,9 +106,28 @@ jobs:
             type=semver,pattern={{version}}
             type=raw,value=latest
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image for latest
+        if: "env.IS_LATEST_RELEASE == '1'"
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Extract metadata (tags, labels) for Docker for stable
+        if: "env.IS_LATEST_RELEASE == '0'"
+        id: metastable
+        uses: docker/metadata-action@v3
+        with:
+          images: kkuwa/my-automatebuild-test
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=${{ github.ref_name }}
+
+      - name: Build and push Docker image for stable
+        if: "env.IS_LATEST_RELEASE == '0'"
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metastable.outputs.tags }}

@@ -47,4 +47,4 @@ jobs:
       - name: Update prerelease version
         id: prerelease
         if: "contains(toJSON(github.event.commits.*.message), '[[PRERELEASE]]')  && !contains(toJSON(github.event.commits.*.message), '[automate_versioning_prerelease] Prerelease ')"
-        run:  npx release-it@${RELEASE_IT_VERSION} -c .release-it-prerelease.json --preRelease=pre${{env.RC_NAME}} --ci
+        run:  npx release-it@${RELEASE_IT_VERSION} -c .release-it-prerelease.json --preRelease=rc${{env.RC_NAME}} --ci
