@@ -36,7 +36,7 @@ jobs:
       - name: Check is latest tag
         run: |
           echo 'IS_PREVIOUS_VERSION<<EOF' >> $GITHUB_ENV
-          npx semver -r ">${{env.TAG_VALUE}}" $(git tag -l --sort=-v:refname | head -n 20 ) | wc -l >> $GITHUB_ENV
+          npx semver -r ">${{env.TAG_VALUE}}" ${TAG_LIST} | wc -l >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: release latest
