@@ -1,4 +1,4 @@
-name: release latest
+name: release apps
 
 on:
   push:
