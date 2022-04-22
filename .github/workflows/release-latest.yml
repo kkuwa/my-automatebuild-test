@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - '**'
     tags:
-      - 'v[0-9].[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 jobs:
   push_to_npm:
     name: Push module to npm
@@ -30,7 +30,7 @@ jobs:
       - name: list all tag
         run: |
           echo 'TAG_LIST<<EOF' >> $GITHUB_ENV
-          git tag -l --sort=-v:refname | head -n 20 >> $GITHUB_ENV
+          git -c 'versionsort.suffix=-' ls-remote --tags --sort='-v:refname' --refs origin | sed -e "s/^.*refs\/tags\///g" | head -n 20 >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Check is latest tag
@@ -48,7 +48,9 @@ jobs:
       - name: Resolve minor version
         if: "env.IS_PREVIOUS_VERSION != '0'"
         run: |
-          VERSION=${{env.TAG_VALUE}} && MINOR=${VERSION%.*} && echo "NPM_TAG_VALUE=stable-${MINOR#v} >> $GITHUB_ENV"
+          VERSION=${{env.TAG_VALUE}}
+          MINOR=${VERSION%.*}
+          echo "NPM_TAG_VALUE=stable-${MINOR#v}" >> $GITHUB_ENV
 
       - name: release stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
@@ -109,13 +111,13 @@ jobs:
       - name: list all tag
         run: |
           echo 'TAG_LIST<<EOF' >> $GITHUB_ENV
-          git tag -l --sort=-v:refname | head -n 20 >> $GITHUB_ENV
+          git -c 'versionsort.suffix=-' ls-remote --tags --sort='-v:refname' --refs origin | sed -e "s/^.*refs\/tags\///g" | head -n 20 >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Check is latest tag
         run: |
           echo 'IS_PREVIOUS_VERSION<<EOF' >> $GITHUB_ENV
-          npx semver -r ">${{env.TAG_VALUE}}" $(git tag -l --sort=-v:refname | head -n 20 ) | wc -l >> $GITHUB_ENV
+          npx semver -r ">${{env.TAG_VALUE}}" ${TAG_LIST} | wc -l >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker for latest
@@ -141,7 +143,9 @@ jobs:
       - name: Resolve minor version
         if: "env.IS_PREVIOUS_VERSION != '0'"
         run: |
-          VERSION=${{env.TAG_VALUE}} && MINOR=${VERSION%.*} && echo "DOCKER_TAG_VALUE=${MINOR#v} >> $GITHUB_ENV"
+          VERSION=${{env.TAG_VALUE}}
+          MINOR=${VERSION%.*}
+          echo "DOCKER_TAG_VALUE=${MINOR#v}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker for stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
@@ -149,9 +153,12 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: kkuwa/my-automatebuild-test
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=${{ env.DOCKER_TAG_VALUE }}
+            type=raw,value=latest,enable=false
 
       - name: Build and push Docker image for stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
