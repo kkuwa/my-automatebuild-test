@@ -2,11 +2,12 @@
     "requireUpstream": false,
     "requireCleanWorkingDir": false,
     "github": {
-      "release": true
+      "release": false
     },
     "git": {
       "commit": true,
       "push": true,
+      "pushArgs": ["--follow-tags", "-f"],
       "requireUpstream": false,
       "requireCleanWorkingDir": false,
       "tagName": "v${version}",
