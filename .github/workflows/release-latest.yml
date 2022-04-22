@@ -154,6 +154,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: kkuwa/my-automatebuild-test
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=${{ env.DOCKER_TAG_VALUE }}
