@@ -146,7 +146,7 @@ jobs:
         run: |
           VERSION=${{env.TAG_VALUE}}
           MINOR=${VERSION%.*}
-          echo "DOCKER_TAG_VALUE=${MINOR#v}"" >> $GITHUB_ENV
+          echo "DOCKER_TAG_VALUE=${MINOR#v}" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker for stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
