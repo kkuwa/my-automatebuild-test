@@ -7,7 +7,6 @@
     "git": {
       "commit": true,
       "push": true,
-      "pushArgs": ["--follow-tags", "-f"],
       "requireUpstream": false,
       "requireCleanWorkingDir": false,
       "tagName": "v${version}",
