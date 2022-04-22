@@ -27,11 +27,8 @@ jobs:
       - name: build
         run: npm run build
 
-      - name: list all tag
         run: |
-          echo 'TAG_LIST<<EOF' >> $GITHUB_ENV
-          git tag >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo 'TAG_LIST="`git tag`"' >> $GITHUB_ENV
 
       - name: Check is latest tag
         run: |
@@ -108,9 +105,7 @@ jobs:
 
       - name: list all tag
         run: |
-          echo 'TAG_LIST<<EOF' >> $GITHUB_ENV
-          git tag >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo 'TAG_LIST="`git tag`"' >> $GITHUB_ENV
 
       - name: Check is latest tag
         run: |
