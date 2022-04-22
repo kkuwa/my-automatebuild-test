@@ -1,4 +1,4 @@
-name: release latest
+name: release RC apps
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-rc[a-f0-9]+.[0-9]+'
 
 jobs:
-  push_to_npm:
-    name: Push module to npm
+  push_rc_to_npm:
+    name: Push RC module to npm
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -31,8 +31,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  push_to_github:
-    name: Release artifacts to github
+  push_rc_to_github:
+    name: Release RC artifacts to github
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -63,8 +63,8 @@ jobs:
           allowUpdates: true
           prerelease: true
 
-  push_to_dockerhub:
-    name: Push Docker image to Docker Hub
+  push_rc_to_dockerhub:
+    name: Push Docker RC image to Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -81,8 +81,11 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: kkuwa/my-automatebuild-test
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}}
+            type=raw,value=latest,enable=false
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
