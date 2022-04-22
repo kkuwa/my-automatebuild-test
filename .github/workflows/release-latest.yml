@@ -35,7 +35,7 @@ jobs:
 
       - name: show latest tag
         run: |
-          git -c 'versionsort.suffix=-' ls-remote --tags --sort='-v:refname' --refs . | sed -e "s/^.*refs\/tags\///g" | head -n 20 
+          git -c 'versionsort.suffix=-' ls-remote --tags --sort='-v:refname' --refs origin | sed -e "s/^.*refs\/tags\///g" | head -n 20 
 
       - name: Check is latest tag
         run: |
