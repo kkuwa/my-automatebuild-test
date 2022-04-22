@@ -33,6 +33,10 @@ jobs:
           git tag -l --sort=-v:refname | head -n 20 >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
+      - name: show latest tag
+        run: |
+          git tag -l --sort=-v:refname | head -n 20 
+
       - name: Check is latest tag
         run: |
           echo 'IS_PREVIOUS_VERSION<<EOF' >> $GITHUB_ENV
