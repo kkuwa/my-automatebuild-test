@@ -48,7 +48,9 @@ jobs:
       - name: Resolve minor version
         if: "env.IS_PREVIOUS_VERSION != '0'"
         run: |
-          VERSION=${{env.TAG_VALUE}} && MINOR=${VERSION%.*} && echo "NPM_TAG_VALUE=stable-${MINOR#v} >> $GITHUB_ENV"
+          VERSION=${{env.TAG_VALUE}}
+          MINOR=${VERSION%.*}
+          echo "NPM_TAG_VALUE=stable-${MINOR#v}" >> $GITHUB_ENV
 
       - name: release stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
@@ -142,7 +144,9 @@ jobs:
       - name: Resolve minor version
         if: "env.IS_PREVIOUS_VERSION != '0'"
         run: |
-          VERSION=${{env.TAG_VALUE}} && MINOR=${VERSION%.*} && echo "DOCKER_TAG_VALUE=${MINOR#v} >> $GITHUB_ENV"
+          VERSION=${{env.TAG_VALUE}}
+          MINOR=${VERSION%.*}
+          echo "DOCKER_TAG_VALUE=${MINOR#v}"" >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker for stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
@@ -153,6 +157,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=raw,value=${{ env.DOCKER_TAG_VALUE }}
+            type=raw,value=latest,enable=false
 
       - name: Build and push Docker image for stable
         if: "env.IS_PREVIOUS_VERSION != '0'"
